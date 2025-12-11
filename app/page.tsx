@@ -14,6 +14,7 @@ type Expense = {
   category_name: string | null;
   total_reimbursed: string;
   remaining_to_reimburse: string;
+  is_archived?: boolean;
 };
 
 type Category = {
@@ -87,6 +88,25 @@ export default function ExpensesPage() {
     },
   });
 
+  const archiveExpense = useMutation({
+    mutationFn: (id: string) =>
+      apiFetch(`/api/expenses/${id}`, { method: "DELETE" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+    },
+  });
+
+  const unarchiveExpense = useMutation({
+    mutationFn: (id: string) =>
+      apiFetch(`/api/expenses/${id}/archive`, {
+        method: "PATCH",
+        body: JSON.stringify({ is_archived: false }),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+    },
+  });
+
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setFormError(null);
@@ -115,9 +135,6 @@ export default function ExpensesPage() {
 
     createExpense.mutate(payload);
   }
-
-  if (isLoading) return <div className="p-6">Loading expenses…</div>;
-  if (error) return <div className="p-6 text-red-600">Failed to load: {(error as Error).message}</div>;
 
   const expenses = expensesData ?? [];
   const categories = categoriesData ?? [];
@@ -239,6 +256,7 @@ export default function ExpensesPage() {
                 <th className="text-left py-2">Category</th>
                 <th className="text-right py-2">Reimbursed</th>
                 <th className="text-right py-2">Remaining</th>
+                <th className="text-right py-2">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -259,6 +277,25 @@ export default function ExpensesPage() {
                   </td>
                   <td className="py-1 text-right">
                     ${Number(e.remaining_to_reimburse).toFixed(2)}
+                  </td>
+                  <td className="py-1 text-right">
+                    {e.is_archived ? (
+                      <button
+                        className="text-xs text-blue-600 underline"
+                        onClick={() => unarchiveExpense.mutate(e.id)}
+                        disabled={unarchiveExpense.isPending}
+                      >
+                        Unarchive
+                      </button>
+                    ) : (
+                      <button
+                        className="text-xs text-red-600 underline"
+                        onClick={() => archiveExpense.mutate(e.id)}
+                        disabled={archiveExpense.isPending}
+                      >
+                        Archive
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

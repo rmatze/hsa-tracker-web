@@ -3,7 +3,7 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch } from "../../lib/apiClient";
+import { apiFetch, apiFetchRaw } from "../../lib/apiClient";
 
 type CategorySummary = {
   categoryId: string | null;
@@ -40,6 +40,9 @@ export default function SummaryPage() {
       return apiFetch(`/api/reimbursements/summary/overall${qs ? `?${qs}` : ""}`);
     },
   });
+
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   function handleApply(e: FormEvent) {
     e.preventDefault();
@@ -118,6 +121,51 @@ export default function SummaryPage() {
             Failed to load: {(error as Error).message}
           </p>
         ) : null}
+
+        <div className="flex items-center justify-between">
+          {exportError && (
+            <p className="text-sm text-red-600">{exportError}</p>
+          )}
+          <button
+            type="button"
+            disabled={exporting}
+            onClick={async () => {
+              try {
+                setExportError(null);
+                setExporting(true);
+
+                const params = new URLSearchParams();
+                if (customFrom) params.set("from", customFrom);
+                if (customTo) params.set("to", customTo);
+                if (!customFrom && !customTo && year) {
+                  params.set("year", year);
+                }
+                const qs = params.toString();
+
+                const res = await apiFetchRaw(
+                  `/api/reimbursements/export${qs ? `?${qs}` : ""}`
+                );
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                const labelYear = year || new Date().getFullYear();
+                a.href = url;
+                a.download = `hsa-reimbursements-${labelYear}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+              } catch (err) {
+                setExportError((err as Error).message);
+              } finally {
+                setExporting(false);
+              }
+            }}
+            className="ml-auto bg-gray-800 text-white px-4 py-2 rounded disabled:opacity-60"
+          >
+            {exporting ? "Downloading…" : `Download CSV for ${year}`}
+          </button>
+        </div>
       </section>
 
       <section className="border rounded p-4 flex flex-col md:flex-row gap-6">
