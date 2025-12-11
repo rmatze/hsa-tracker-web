@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../lib/apiClient";
 
@@ -202,7 +203,14 @@ export default function ExpensesPage() {
             <tbody>
               {expenses.map((e) => (
                 <tr key={e.id} className="border-b">
-                  <td className="py-1">{e.date_paid}</td>
+                  <td className="py-1">
+                    <Link
+                      href={`/expenses/${e.id}`}
+                      className="text-blue-600 underline"
+                    >
+                      {e.date_paid}
+                    </Link>
+                  </td>
                   <td className="py-1 text-right">${Number(e.amount).toFixed(2)}</td>
                   <td className="py-1">{e.category_name ?? "Uncategorized"}</td>
                   <td className="py-1 text-right">
