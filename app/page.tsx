@@ -21,6 +21,11 @@ type Category = {
   name: string;
 };
 
+type Summary = {
+  totalEligible: number;
+  totalReimbursed: number;
+  remaining: number;
+};
 type NewExpensePayload = {
   amount: number;
   date_paid: string;
@@ -44,6 +49,11 @@ export default function ExpensesPage() {
   const { data: categoriesData } = useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: () => apiFetch("/api/categories"),
+  });
+
+  const { data: summaryData } = useQuery<Summary>({
+    queryKey: ["summary-overall"],
+    queryFn: () => apiFetch("/api/reimbursements/summary/overall"),
   });
 
   const [formState, setFormState] = useState({
@@ -111,10 +121,41 @@ export default function ExpensesPage() {
 
   const expenses = expensesData ?? [];
   const categories = categoriesData ?? [];
+  const summary = summaryData ?? {
+    totalEligible: 0,
+    totalReimbursed: 0,
+    remaining: 0,
+  };
 
   return (
     <main className="p-6 max-w-3xl mx-auto space-y-6">
-      <h1 className="text-2xl font-semibold">Expenses</h1>
+      <header className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Expenses</h1>
+        <Link href="/summary" className="text-sm text-blue-600 underline">
+          View summary
+        </Link>
+      </header>
+
+      <section className="border rounded p-4 flex flex-col md:flex-row gap-4">
+        <div>
+          <h2 className="text-sm font-semibold text-gray-600">Total Eligible</h2>
+          <p className="text-xl font-semibold">
+            ${summary.totalEligible.toFixed(2)}
+          </p>
+        </div>
+        <div>
+          <h2 className="text-sm font-semibold text-gray-600">Total Reimbursed</h2>
+          <p className="text-xl font-semibold text-green-700">
+            ${summary.totalReimbursed.toFixed(2)}
+          </p>
+        </div>
+        <div>
+          <h2 className="text-sm font-semibold text-gray-600">Remaining</h2>
+          <p className="text-xl font-semibold text-orange-700">
+            ${summary.remaining.toFixed(2)}
+          </p>
+        </div>
+      </section>
 
       <section className="border rounded p-4 space-y-3">
         <h2 className="text-lg font-semibold">Add Expense</h2>
