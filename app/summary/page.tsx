@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch, apiFetchRaw } from "../../lib/apiClient";
+import { formatCurrency } from "../../lib/formatCurrency";
 
 type CategorySummary = {
   categoryId: string | null;
@@ -58,14 +58,11 @@ export default function SummaryPage() {
 
   return (
     <main className="p-6 max-w-4xl mx-auto space-y-6">
-      <header className="flex items-center justify-between">
+      <header>
         <h1 className="text-2xl font-semibold">Reimbursement Summary</h1>
-        <Link href="/" className="text-sm text-blue-600 underline">
-          ← Back to expenses
-        </Link>
       </header>
 
-      <section className="border rounded p-4 space-y-3">
+      <section className="border rounded p-4 space-y-3 bg-white">
         <form
           onSubmit={handleApply}
           className="flex flex-col md:flex-row gap-4 items-start md:items-end"
@@ -106,10 +103,7 @@ export default function SummaryPage() {
               onChange={(e) => setCustomTo(e.target.value)}
             />
           </div>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
+          <button type="submit" className="btn btn-primary btn-wide">
             Apply
           </button>
         </form>
@@ -161,35 +155,35 @@ export default function SummaryPage() {
                 setExporting(false);
               }
             }}
-            className="ml-auto bg-gray-800 text-white px-4 py-2 rounded disabled:opacity-60"
+            className="ml-auto btn btn-primary btn-wide disabled:opacity-60"
           >
             {exporting ? "Downloading…" : `Download CSV for ${year}`}
           </button>
         </div>
       </section>
 
-      <section className="border rounded p-4 flex flex-col md:flex-row gap-6">
-        <div>
-          <h2 className="text-sm font-semibold text-gray-600">Total Eligible</h2>
-          <p className="text-2xl font-semibold">
-            ${summary.totalEligible.toFixed(2)}
-          </p>
+      <section className="summary-row">
+        <div className="summary-card">
+          <div className="summary-label">Total eligible</div>
+          <div className="summary-value">
+            ${formatCurrency(summary.totalEligible)}
+          </div>
         </div>
-        <div>
-          <h2 className="text-sm font-semibold text-gray-600">Total Reimbursed</h2>
-          <p className="text-2xl font-semibold text-green-700">
-            ${summary.totalReimbursed.toFixed(2)}
-          </p>
+        <div className="summary-card">
+          <div className="summary-label">Total reimbursed</div>
+          <div className="summary-value">
+            ${formatCurrency(summary.totalReimbursed)}
+          </div>
         </div>
-        <div>
-          <h2 className="text-sm font-semibold text-gray-600">Remaining</h2>
-          <p className="text-2xl font-semibold text-orange-700">
-            ${summary.remaining.toFixed(2)}
-          </p>
+        <div className="summary-card">
+          <div className="summary-label">Remaining</div>
+          <div className="summary-value">
+            ${formatCurrency(summary.remaining)}
+          </div>
         </div>
       </section>
 
-      <section className="border rounded p-4 space-y-3">
+      <section className="border rounded p-4 space-y-3 bg-white">
         <h2 className="text-lg font-semibold">By Category</h2>
         {summary.byCategory.length === 0 ? (
           <p>No data in this range.</p>
@@ -208,13 +202,13 @@ export default function SummaryPage() {
                 <tr key={c.categoryId ?? "uncategorized"} className="border-b">
                   <td className="py-1">{c.categoryName}</td>
                   <td className="py-1 text-right">
-                    ${c.totalEligible.toFixed(2)}
+                    ${formatCurrency(c.totalEligible)}
                   </td>
                   <td className="py-1 text-right">
-                    ${c.totalReimbursed.toFixed(2)}
+                    ${formatCurrency(c.totalReimbursed)}
                   </td>
                   <td className="py-1 text-right">
-                    ${c.remaining.toFixed(2)}
+                    ${formatCurrency(c.remaining)}
                   </td>
                 </tr>
               ))}
