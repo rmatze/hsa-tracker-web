@@ -134,6 +134,7 @@ export default function ExpenseDetailPage() {
     amount: "",
     method: "",
     notes: "",
+    reimbursed_at: "",
   });
   const [reimburseError, setReimburseError] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<Image | null>(null);
@@ -151,11 +152,17 @@ export default function ExpenseDetailPage() {
           amount: amountNum,
           method: reimburseForm.method || undefined,
           notes: reimburseForm.notes || undefined,
+          reimbursed_at: reimburseForm.reimbursed_at || undefined,
         }),
       });
     },
     onSuccess: () => {
-      setReimburseForm({ amount: "", method: "", notes: "" });
+      setReimburseForm({
+        amount: "",
+        method: "",
+        notes: "",
+        reimbursed_at: "",
+      });
       setReimburseError(null);
       queryClient.invalidateQueries({ queryKey: ["reimbursements", expenseId] });
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
@@ -517,6 +524,17 @@ export default function ExpenseDetailPage() {
               value={reimburseForm.amount}
               onChange={(e) =>
                 setReimburseForm((s) => ({ ...s, amount: e.target.value }))
+              }
+            />
+          </div>
+          <div>
+            <label className="block text-sm mb-1">Reimbursed date (optional)</label>
+            <input
+              type="date"
+              className="w-full border px-2 py-1 rounded"
+              value={reimburseForm.reimbursed_at}
+              onChange={(e) =>
+                setReimburseForm((s) => ({ ...s, reimbursed_at: e.target.value }))
               }
             />
           </div>

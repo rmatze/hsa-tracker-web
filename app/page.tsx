@@ -47,17 +47,18 @@ export default function ExpensesPage() {
     queryFn: () => apiFetch("/api/expenses?status=active"),
   });
 
-  const { data: summaryData } = useQuery<Summary>({
-    queryKey: ["summary-overall"],
-    queryFn: () => apiFetch("/api/reimbursements/summary/overall"),
-  });
-
   const expenses = expensesData ?? [];
-  const summary = summaryData ?? {
-    totalEligible: 0,
-    totalReimbursed: 0,
-    remaining: 0,
-  };
+  const summary = expenses.reduce(
+    (acc, e) => {
+      const amount = Number(e.amount) || 0;
+      const reimbursed = Number(e.total_reimbursed) || 0;
+      acc.totalEligible += amount;
+      acc.totalReimbursed += reimbursed;
+      return acc;
+    },
+    { totalEligible: 0, totalReimbursed: 0, remaining: 0 }
+  );
+  summary.remaining = summary.totalEligible - summary.totalReimbursed;
 
   return (
     <main className="p-6 max-w-3xl mx-auto space-y-6">
@@ -86,8 +87,8 @@ export default function ExpensesPage() {
         </div>
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Current Expenses</h2>
+      <section className="border rounded p-4 space-y-3 bg-white">
+        <h2 className="text-lg font-semibold">Current Expenses</h2>
         {expenses.length === 0 ? (
           <p>No expenses yet.</p>
         ) : (

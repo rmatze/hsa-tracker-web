@@ -188,6 +188,10 @@ td {
   justify-content: center;
 }
 
+.justify-end {
+  justify-content: flex-end;
+}
+
 .gap-2 {
   gap: 0.5rem;
 }
@@ -272,6 +276,10 @@ td {
 
 .text-gray-600 {
   color: #4b5563;
+}
+
+.text-gray-400 {
+  color: #9ca3af;
 }
 
 .text-blue-600 {
@@ -429,6 +437,22 @@ td {
   min-width: 9rem;
   width: auto;
   max-width: 12rem;
+}
+
+.icon-button {
+  border: none;
+  background: transparent;
+  padding: 0.25rem;
+  border-radius: 999px;
+  color: #000000; /* black for visibility */
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-button:hover {
+  background-color: rgba(15, 23, 42, 0.04);
 }
 
 /* Modal */
