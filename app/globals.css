@@ -38,13 +38,14 @@ td {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.04);
 }
 
 .summary-label {
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #9ca3af;
+  color: #6b7280; /* slate-500 */
   font-weight: 600;
   margin-bottom: 0.2rem;
 }
@@ -53,6 +54,17 @@ td {
   font-size: 1.25rem;
   line-height: 1.75rem;
   font-weight: 600;
+}
+
+/* Soft card shadow for main sections */
+
+.shadow-soft {
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.04);
+}
+
+.section-card {
+  border-radius: 0.875rem;
+  overflow: hidden;
 }
 
 @media (max-width: 640px) {
@@ -237,7 +249,7 @@ td {
 }
 
 .rounded {
-  border-radius: 0.5rem;
+  border-radius: 0.875rem;
 }
 
 .max-w-3xl {
@@ -382,10 +394,6 @@ td {
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-}
-
-.rounded {
-  border-radius: 0.5rem;
 }
 
 .disabled\:opacity-60:disabled {

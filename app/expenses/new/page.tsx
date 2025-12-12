@@ -92,15 +92,15 @@ export default function NewExpensePage() {
   const categories = categoriesData ?? [];
 
   return (
-    <main className="p-6 max-w-3xl mx-auto space-y-6">
+    <main className="p-6 max-w-4xl mx-auto space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Add expense</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Add expense</h1>
         <p className="text-sm text-gray-600">
           Capture a new out-of-pocket medical expense to reimburse later.
         </p>
       </header>
 
-      <section className="border rounded p-4 space-y-3 bg-white">
+      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
         <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm mb-1">Amount</label>

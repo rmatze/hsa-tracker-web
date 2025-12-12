@@ -297,12 +297,12 @@ export default function ExpenseDetailPage() {
   return (
     <main className="p-6 max-w-4xl mx-auto space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Expense Detail</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Expense Detail</h1>
       </header>
 
-      <section className="border rounded p-4 space-y-3 bg-white">
+      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Details</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Details</h2>
         </div>
 
         {isEditing ? (
@@ -453,8 +453,8 @@ export default function ExpenseDetailPage() {
         )}
       </section>
 
-      <section className="border rounded p-4 space-y-3 bg-white">
-        <h2 className="text-lg font-semibold">Receipts</h2>
+      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
+        <h2 className="text-lg font-semibold text-gray-900">Receipts</h2>
         <form
           onSubmit={handleUpload}
           className="flex flex-col gap-3 w-full"
@@ -508,8 +508,10 @@ export default function ExpenseDetailPage() {
         )}
       </section>
 
-      <section className="border rounded p-4 space-y-3 bg-white">
-        <h2 className="text-lg font-semibold">Reimbursements</h2>
+      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
+        <h2 className="text-lg font-semibold text-gray-900">
+          Reimbursements
+        </h2>
 
         <form
           onSubmit={handleReimburseSubmit}

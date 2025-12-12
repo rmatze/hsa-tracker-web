@@ -61,9 +61,11 @@ export default function ExpensesPage() {
   summary.remaining = summary.totalEligible - summary.totalReimbursed;
 
   return (
-    <main className="p-6 max-w-3xl mx-auto space-y-6">
+    <main className="p-6 max-w-4xl mx-auto space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Expenses Dashboard</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">
+          Expenses Dashboard
+        </h1>
       </header>
 
       <section className="summary-row">
@@ -87,8 +89,10 @@ export default function ExpensesPage() {
         </div>
       </section>
 
-      <section className="border rounded p-4 space-y-3 bg-white">
-        <h2 className="text-lg font-semibold">Current Expenses</h2>
+      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
+        <h2 className="text-lg font-semibold text-gray-900">
+          Current Expenses
+        </h2>
         {expenses.length === 0 ? (
           <p>No expenses yet.</p>
         ) : (

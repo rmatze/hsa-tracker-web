@@ -101,10 +101,12 @@ export default function SummaryPage() {
   return (
     <main className="p-6 max-w-4xl mx-auto space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Reimbursement Summary</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">
+          Reimbursement Summary
+        </h1>
       </header>
 
-      <section className="border rounded p-4 space-y-3 bg-white">
+      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
         <form
           onSubmit={handleApply}
           className="flex flex-col md:flex-row gap-4 items-start md:items-end"
@@ -184,9 +186,11 @@ export default function SummaryPage() {
         </div>
       </section>
 
-      <section className="border rounded p-4 space-y-3 bg-white">
+      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">By Reimbursement Date</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            By Reimbursement Date
+          </h2>
           <button
             type="button"
             className="icon-button"
