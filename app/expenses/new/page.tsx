@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../../../lib/apiClient";
+import { DateField } from "../../../components/DateField";
 
 type Category = {
   id: string;
@@ -94,47 +95,48 @@ export default function NewExpensePage() {
   return (
     <main className="p-6 max-w-4xl mx-auto space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-gray-900">Add expense</h1>
+        <h1 className="text-2xl card-title">Add expense</h1>
         <p className="text-sm text-gray-600">
           Capture a new out-of-pocket medical expense to reimburse later.
         </p>
       </header>
 
-      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
-        <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
+      <section className="rounded p-4 space-y-3 bg-white shadow-soft section-card">
+        <form
+          className="grid grid-cols-1 md:grid-cols-2 gap-3"
+          onSubmit={handleSubmit}
+        >
           <div>
-            <label className="block text-sm mb-1">Amount</label>
+            <label className="form-label">Amount</label>
             <input
               type="number"
               step="0.01"
-              className="w-full border px-2 py-1 rounded"
+              className="form-control"
               value={formState.amount}
               onChange={(e) => setFormState((s) => ({ ...s, amount: e.target.value }))}
             />
           </div>
+          <DateField
+            label="Date paid out-of-pocket"
+            value={formState.date_paid}
+            onChange={(value) =>
+              setFormState((s) => ({ ...s, date_paid: value }))
+            }
+          />
           <div>
-            <label className="block text-sm mb-1">Date paid out-of-pocket</label>
-            <input
-              type="date"
-              className="w-full border px-2 py-1 rounded"
-              value={formState.date_paid}
-              onChange={(e) => setFormState((s) => ({ ...s, date_paid: e.target.value }))}
-            />
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Payment method</label>
+            <label className="form-label">Payment method</label>
             <input
               type="text"
-              className="w-full border px-2 py-1 rounded"
+              className="form-control"
               placeholder="e.g. Credit Card, Debit, Cash"
               value={formState.payment_method}
               onChange={(e) => setFormState((s) => ({ ...s, payment_method: e.target.value }))}
             />
           </div>
           <div>
-            <label className="block text-sm mb-1">Category</label>
+            <label className="form-label">Category</label>
             <select
-              className="w-full border px-2 py-1 rounded"
+              className="form-control"
               value={formState.category_id}
               onChange={(e) => setFormState((s) => ({ ...s, category_id: e.target.value }))}
             >
@@ -147,10 +149,10 @@ export default function NewExpensePage() {
             </select>
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm mb-1">Description</label>
+            <label className="form-label">Description</label>
             <input
               type="text"
-              className="w-full border px-2 py-1 rounded"
+              className="form-control"
               value={formState.description}
               onChange={(e) => setFormState((s) => ({ ...s, description: e.target.value }))}
             />
@@ -165,7 +167,7 @@ export default function NewExpensePage() {
             <button
               type="submit"
               disabled={createExpense.isPending}
-              className="btn btn-primary btn-wide disabled:opacity-60"
+              className="btn"
             >
               {createExpense.isPending ? "Saving…" : "Save expense"}
             </button>

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiFetch, apiFetchRaw } from "../../../lib/apiClient";
 import { formatCurrency } from "../../../lib/formatCurrency";
+import { DateField } from "../../../components/DateField";
 
 type Expense = {
   id: string;
@@ -297,12 +298,12 @@ export default function ExpenseDetailPage() {
   return (
     <main className="p-6 max-w-4xl mx-auto space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-gray-900">Expense Detail</h1>
+        <h1 className="text-2xl card-title">Expense Detail</h1>
       </header>
 
-      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
+      <section className="rounded p-4 space-y-3 bg-white shadow-soft section-card">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Details</h2>
+          <h2 className="text-lg card-title">Details</h2>
         </div>
 
         {isEditing ? (
@@ -313,23 +314,19 @@ export default function ExpenseDetailPage() {
               updateExpenseMutation.mutate();
             }}
           >
+            <DateField
+              label="Date"
+              value={editState.date_paid}
+              onChange={(value) =>
+                setEditState((s) => ({ ...s, date_paid: value }))
+              }
+            />
             <div>
-              <label className="block text-sm mb-1">Date</label>
-              <input
-                type="date"
-                className="w-full border px-2 py-1 rounded"
-                value={editState.date_paid}
-                onChange={(e) =>
-                  setEditState((s) => ({ ...s, date_paid: e.target.value }))
-                }
-              />
-            </div>
-            <div>
-              <label className="block text-sm mb-1">Amount</label>
+              <label className="form-label">Amount</label>
               <input
                 type="number"
                 step="0.01"
-                className="w-full border px-2 py-1 rounded"
+                className="form-control"
                 value={editState.amount}
                 onChange={(e) =>
                   setEditState((s) => ({ ...s, amount: e.target.value }))
@@ -337,10 +334,10 @@ export default function ExpenseDetailPage() {
               />
             </div>
             <div>
-              <label className="block text-sm mb-1">Payment method</label>
+              <label className="form-label">Payment method</label>
               <input
                 type="text"
-                className="w-full border px-2 py-1 rounded"
+                className="form-control"
                 value={editState.payment_method}
                 onChange={(e) =>
                   setEditState((s) => ({
@@ -351,9 +348,9 @@ export default function ExpenseDetailPage() {
               />
             </div>
             <div>
-              <label className="block text-sm mb-1">Category</label>
+              <label className="form-label">Category</label>
               <select
-                className="w-full border px-2 py-1 rounded"
+                className="form-control"
                 value={editState.category_id}
                 onChange={(e) =>
                   setEditState((s) => ({ ...s, category_id: e.target.value }))
@@ -368,10 +365,10 @@ export default function ExpenseDetailPage() {
               </select>
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm mb-1">Description</label>
+              <label className="form-label">Description</label>
               <input
                 type="text"
-                className="w-full border px-2 py-1 rounded"
+                className="form-control"
                 value={editState.description}
                 onChange={(e) =>
                   setEditState((s) => ({
@@ -384,7 +381,7 @@ export default function ExpenseDetailPage() {
             <div className="md:col-span-2 flex justify-center gap-5 mt-2">
               <button
                 type="button"
-                className="btn btn-danger text-xs"
+                className="btn"
                 onClick={() => setIsEditing(false)}
                 disabled={updateExpenseMutation.isPending}
               >
@@ -392,7 +389,7 @@ export default function ExpenseDetailPage() {
               </button>
               <button
                 type="submit"
-                className="btn btn-primary btn-wide"
+                className="btn"
                 disabled={updateExpenseMutation.isPending}
               >
                 {updateExpenseMutation.isPending ? "Saving…" : "Save changes"}
@@ -434,7 +431,7 @@ export default function ExpenseDetailPage() {
             <div className="pt-3 flex justify-center">
               <button
                 type="button"
-                className="btn btn-primary btn-wide"
+                className="btn"
                 onClick={() => {
                   setEditState({
                     amount: expense.amount ?? "",
@@ -453,24 +450,45 @@ export default function ExpenseDetailPage() {
         )}
       </section>
 
-      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
-        <h2 className="text-lg font-semibold text-gray-900">Receipts</h2>
+      <section className="rounded p-4 space-y-3 bg-white shadow-soft section-card">
+        <h2 className="text-lg card-title">Receipts</h2>
         <form
           onSubmit={handleUpload}
           className="flex flex-col gap-3 w-full"
         >
-          <div className="self-start">
-            <input
-              type="file"
-              accept="image/*,application/pdf"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            />
+          <div className="self-start w-full max-w-md">
+            <label className="form-label">Upload receipt</label>
+            <div className="file-field">
+              <div className="file-field-wrapper">
+                <div className="file-field-label">
+                  <div className="file-field-text">
+                    {file ? file.name : "File Select"}
+                  </div>
+                  <button
+                    type="button"
+                    className="file-field-button"
+                    onClick={() =>
+                      document.querySelector<HTMLInputElement>("#receipt-file")?.click()
+                    }
+                  >
+                    Choose File
+                  </button>
+                </div>
+                <input
+                  id="receipt-file"
+                  type="file"
+                  accept="image/*,application/pdf"
+                  className="file-input-hidden"
+                  onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                />
+              </div>
+            </div>
           </div>
           <div className="flex justify-center">
             <button
               type="submit"
               disabled={!file || uploadMutation.isPending}
-              className="btn btn-primary btn-wide disabled:opacity-60 mt-2"
+              className="btn mt-2"
             >
               {uploadMutation.isPending ? "Uploading…" : "Upload"}
             </button>
@@ -497,7 +515,7 @@ export default function ExpenseDetailPage() {
                   />
                 </button>
                 <button
-                  className="btn btn-danger text-xs"
+                  className="btn"
                   onClick={() => deleteImageMutation.mutate(img.id)}
                 >
                   Delete
@@ -508,43 +526,40 @@ export default function ExpenseDetailPage() {
         )}
       </section>
 
-      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
-        <h2 className="text-lg font-semibold text-gray-900">
-          Reimbursements
-        </h2>
+      <section className="rounded p-4 space-y-3 bg-white shadow-soft section-card">
+        <h2 className="text-lg card-title">Reimbursements</h2>
 
         <form
           onSubmit={handleReimburseSubmit}
           className="grid grid-cols-1 md:grid-cols-3 gap-3"
         >
           <div>
-            <label className="block text-sm mb-1">Amount</label>
+            <label className="form-label">Amount</label>
             <input
               type="number"
               step="0.01"
-              className="w-full border px-2 py-1 rounded"
+              className="form-control"
               value={reimburseForm.amount}
               onChange={(e) =>
                 setReimburseForm((s) => ({ ...s, amount: e.target.value }))
               }
             />
           </div>
+          <DateField
+            label="Reimbursed date (optional)"
+            value={reimburseForm.reimbursed_at}
+            onChange={(value) =>
+              setReimburseForm((s) => ({
+                ...s,
+                reimbursed_at: value,
+              }))
+            }
+          />
           <div>
-            <label className="block text-sm mb-1">Reimbursed date (optional)</label>
-            <input
-              type="date"
-              className="w-full border px-2 py-1 rounded"
-              value={reimburseForm.reimbursed_at}
-              onChange={(e) =>
-                setReimburseForm((s) => ({ ...s, reimbursed_at: e.target.value }))
-              }
-            />
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Method</label>
+            <label className="form-label">Method</label>
             <input
               type="text"
-              className="w-full border px-2 py-1 rounded"
+              className="form-control"
               placeholder="e.g. Fidelity HSA"
               value={reimburseForm.method}
               onChange={(e) =>
@@ -553,10 +568,10 @@ export default function ExpenseDetailPage() {
             />
           </div>
           <div>
-            <label className="block text-sm mb-1">Notes</label>
+            <label className="form-label">Notes</label>
             <input
               type="text"
-              className="w-full border px-2 py-1 rounded"
+              className="form-control"
               value={reimburseForm.notes}
               onChange={(e) =>
                 setReimburseForm((s) => ({ ...s, notes: e.target.value }))
@@ -570,7 +585,7 @@ export default function ExpenseDetailPage() {
             <button
               type="submit"
               disabled={reimburseMutation.isPending}
-              className="btn btn-primary btn-wide disabled:opacity-60"
+              className="btn"
             >
               {reimburseMutation.isPending ? "Saving…" : "Add Reimbursement"}
             </button>
@@ -580,32 +595,32 @@ export default function ExpenseDetailPage() {
         {reimbursements.length === 0 ? (
           <p>No reimbursements yet.</p>
         ) : (
-          <table className="w-full text-sm border-collapse">
+          <table className="table table-striped table-style-1">
             <thead>
               <tr>
-                <th className="text-left py-2">Date</th>
-                <th className="text-right py-2">Amount</th>
-                <th className="text-left py-2">Method</th>
-                <th className="text-left py-2">Notes</th>
-                <th className="text-right py-2">Actions</th>
+                <th className="text-left">Date</th>
+                <th className="text-right">Amount</th>
+                <th className="text-left">Method</th>
+                <th className="text-left">Notes</th>
+                <th className="text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {reimbursements.map((r) => (
                 <tr key={r.id}>
-                  <td className="py-1">
+                  <td>
                     {r.reimbursed_at
                       ? new Date(r.reimbursed_at).toLocaleDateString()
                       : ""}
                   </td>
-                  <td className="py-1 text-right">
+                  <td className="text-right">
                     ${formatCurrency(r.amount)}
                   </td>
-                  <td className="py-1">{r.method ?? ""}</td>
-                  <td className="py-1">{r.notes ?? ""}</td>
-                  <td className="py-1 text-right">
+                  <td>{r.method ?? ""}</td>
+                  <td>{r.notes ?? ""}</td>
+                  <td className="text-right">
                     <button
-                      className="btn btn-danger text-xs"
+                      className="btn"
                       onClick={() => deleteReimbursementMutation.mutate(r.id)}
                     >
                       Delete
@@ -638,7 +653,7 @@ export default function ExpenseDetailPage() {
               </span>
               <button
                 type="button"
-                className="btn btn-danger text-xs"
+                className="btn"
                 onClick={() => setPreviewImage(null)}
               >
                 Close
@@ -652,7 +667,7 @@ export default function ExpenseDetailPage() {
         <button
           type="button"
           disabled={deleteExpenseMutation.isPending}
-          className="btn btn-danger mt-4"
+          className="btn mt-4"
           onClick={() => deleteExpenseMutation.mutate()}
         >
           {deleteExpenseMutation.isPending ? "Deleting…" : "Delete expense"}

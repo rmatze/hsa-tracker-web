@@ -4,6 +4,7 @@ import { useState, FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch, apiFetchRaw } from "../../lib/apiClient";
 import { formatCurrency } from "../../lib/formatCurrency";
+import { DateField } from "../../components/DateField";
 
 type ExpenseSummary = {
   expenseId: string;
@@ -101,20 +102,18 @@ export default function SummaryPage() {
   return (
     <main className="p-6 max-w-4xl mx-auto space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-gray-900">
-          Reimbursement Summary
-        </h1>
+        <h1 className="text-2xl card-title">Reimbursement Summary</h1>
       </header>
 
-      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
+      <section className="rounded p-4 space-y-3 bg-white shadow-soft section-card">
         <form
           onSubmit={handleApply}
           className="flex flex-col md:flex-row gap-4 items-start md:items-end"
         >
           <div>
-            <label className="block text-sm mb-1">Year</label>
+            <label className="form-label">Year</label>
             <select
-              className="border px-2 py-1 rounded"
+              className="form-control form-control--inline"
               value={year}
               onChange={(e) => setYear(e.target.value)}
             >
@@ -129,32 +128,26 @@ export default function SummaryPage() {
               })}
             </select>
           </div>
-          <div>
-            <label className="block text-sm mb-1">From (optional)</label>
-            <input
-              type="date"
-              className="border px-2 py-1 rounded"
-              value={customFrom}
-              onChange={(e) => setCustomFrom(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm mb-1">To (optional)</label>
-            <input
-              type="date"
-              className="border px-2 py-1 rounded"
-              value={customTo}
-              onChange={(e) => setCustomTo(e.target.value)}
-            />
-          </div>
+          <DateField
+            label="From (optional)"
+            value={customFrom}
+            onChange={setCustomFrom}
+            inline
+          />
+          <DateField
+            label="To (optional)"
+            value={customTo}
+            onChange={setCustomTo}
+            inline
+          />
           <div className="flex items-center gap-2 mt-2 md:mt-0">
-            <button type="submit" className="btn btn-primary btn-wide">
+            <button type="submit" className="btn">
               Apply
             </button>
             <button
               type="button"
               onClick={handleClearDates}
-              className="btn btn-primary btn-wide disabled:opacity-60"
+              className="btn"
               disabled={isLoading}
             >
               Clear dates
@@ -171,29 +164,25 @@ export default function SummaryPage() {
         ) : null}
       </section>
 
-      <section className="summary-row">
-        <div className="summary-card">
-          <div className="summary-label">Total reimbursement</div>
-          <div className="summary-value">
+      <section className="metric-row">
+        <div className="metric-card">
+          <div className="metric-value">
             ${formatCurrency(summary.totalReimbursed)}
           </div>
+          <div className="metric-label">Total reimbursement</div>
         </div>
-        <div className="summary-card">
-          <div className="summary-label">Total expenses</div>
-          <div className="summary-value">
-            {summary.byExpense.length}
-          </div>
+        <div className="metric-card">
+          <div className="metric-value">{summary.byExpense.length}</div>
+          <div className="metric-label">Total expenses</div>
         </div>
       </section>
 
-      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
+      <section className="rounded p-4 space-y-3 bg-white shadow-soft section-card">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">
-            By Reimbursement Date
-          </h2>
+          <h2 className="text-lg card-title">By Reimbursement Date</h2>
           <button
             type="button"
-            className="icon-button"
+            className="btn"
             aria-label="Download reimbursements CSV"
             onClick={handleDownloadCsv}
             disabled={exporting}
@@ -221,25 +210,25 @@ export default function SummaryPage() {
         {summary.byExpense.length === 0 ? (
           <p>No reimbursements in this range.</p>
         ) : (
-          <table className="w-full text-sm border-collapse">
+          <table className="table table-striped table-style-1">
             <thead>
-              <tr className="border-b">
-                <th className="text-left py-2">Date reimbursed</th>
-                <th className="text-left py-2">Expense</th>
-                <th className="text-right py-2">Amount</th>
-                <th className="text-right py-2">Reimbursed</th>
-                <th className="text-right py-2">Remaining</th>
+              <tr>
+                <th className="text-left">Date reimbursed</th>
+                <th className="text-left">Expense</th>
+                <th className="text-right">Amount</th>
+                <th className="text-right">Reimbursed</th>
+                <th className="text-right">Remaining</th>
               </tr>
             </thead>
             <tbody>
               {summary.byExpense.map((e) => (
-                <tr key={e.expenseId} className="border-b">
-                  <td className="py-1">
+                <tr key={e.expenseId}>
+                  <td>
                     {e.lastReimbursedAt
                       ? new Date(e.lastReimbursedAt).toLocaleDateString()
                       : ""}
                   </td>
-                  <td className="py-1">
+                  <td>
                     <a
                       href={`/expenses/${e.expenseId}`}
                       className="text-blue-600 underline"
@@ -247,13 +236,13 @@ export default function SummaryPage() {
                       {e.description || "View expense"}
                     </a>
                   </td>
-                  <td className="py-1 text-right">
+                  <td className="text-right">
                     ${formatCurrency(e.amount)}
                   </td>
-                  <td className="py-1 text-right">
+                  <td className="text-right">
                     ${formatCurrency(e.reimbursed)}
                   </td>
-                  <td className="py-1 text-right">
+                  <td className="text-right">
                     ${formatCurrency(e.remaining)}
                   </td>
                 </tr>

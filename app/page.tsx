@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../lib/apiClient";
 import { formatCurrency } from "../lib/formatCurrency";
+import { auth } from "../lib/firebaseClient";
 
 type Expense = {
   id: string;
@@ -37,6 +38,11 @@ type NewExpensePayload = {
 
 export default function ExpensesPage() {
   const queryClient = useQueryClient();
+  const currentUser = auth.currentUser;
+  const firstName =
+    currentUser?.displayName?.split(" ")[0] ||
+    currentUser?.email?.split("@")[0] ||
+    "there";
 
   const {
     data: expensesData,
@@ -63,53 +69,49 @@ export default function ExpensesPage() {
   return (
     <main className="p-6 max-w-4xl mx-auto space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-gray-900">
-          Expenses Dashboard
-        </h1>
+        <h1 className="text-2xl card-title">Welcome, {firstName}</h1>
       </header>
 
-      <section className="summary-row">
-        <div className="summary-card">
-          <div className="summary-label">Total eligible</div>
-          <div className="summary-value">
+      <section className="metric-row">
+        <div className="metric-card">
+          <div className="metric-value">
             ${formatCurrency(summary.totalEligible)}
           </div>
+          <div className="metric-label">Total eligible</div>
         </div>
-        <div className="summary-card">
-          <div className="summary-label">Total reimbursed</div>
-          <div className="summary-value">
+        <div className="metric-card">
+          <div className="metric-value">
             ${formatCurrency(summary.totalReimbursed)}
           </div>
+          <div className="metric-label">Total reimbursed</div>
         </div>
-        <div className="summary-card">
-          <div className="summary-label">Remaining</div>
-          <div className="summary-value">
+        <div className="metric-card">
+          <div className="metric-value">
             ${formatCurrency(summary.remaining)}
           </div>
+          <div className="metric-label">Remaining</div>
         </div>
       </section>
 
-      <section className="border rounded p-4 space-y-3 bg-white shadow-soft section-card">
-        <h2 className="text-lg font-semibold text-gray-900">
-          Current Expenses
-        </h2>
+      <section className="rounded p-4 space-y-3 bg-white shadow-soft section-card">
+        <h2 className="text-lg card-title">Current Expenses</h2>
         {expenses.length === 0 ? (
           <p>No expenses yet.</p>
         ) : (
-          <table className="w-full text-sm border-collapse">
+          <table className="table table-striped table-style-1">
             <thead>
-              <tr className="border-b">
-                <th className="text-left py-2">Date</th>
-                <th className="text-right py-2">Amount</th>
-                <th className="text-left py-2">Category</th>
-                <th className="text-right py-2">Reimbursed</th>
-                <th className="text-right py-2">Remaining</th>
+              <tr>
+                <th className="text-left">Date</th>
+                <th className="text-right">Amount</th>
+                <th className="text-left">Category</th>
+                <th className="text-right">Reimbursed</th>
+                <th className="text-right">Remaining</th>
               </tr>
             </thead>
             <tbody>
               {expenses.map((e) => (
-                <tr key={e.id} className="border-b">
-                  <td className="py-1">
+                <tr key={e.id}>
+                  <td>
                     <Link
                       href={`/expenses/${e.id}`}
                       className="text-blue-600 underline"
@@ -117,14 +119,14 @@ export default function ExpensesPage() {
                       {new Date(e.date_paid).toLocaleDateString()}
                     </Link>
                   </td>
-                  <td className="py-1 text-right">
+                  <td className="text-right">
                     ${formatCurrency(e.amount)}
                   </td>
-                  <td className="py-1">{e.category_name ?? "Uncategorized"}</td>
-                  <td className="py-1 text-right">
+                  <td>{e.category_name ?? "Uncategorized"}</td>
+                  <td className="text-right">
                     ${formatCurrency(e.total_reimbursed)}
                   </td>
-                  <td className="py-1 text-right">
+                  <td className="text-right">
                     ${formatCurrency(e.remaining_to_reimburse)}
                   </td>
                 </tr>
